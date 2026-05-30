@@ -15,9 +15,16 @@ namespace DenounceBeasts.API.Controllers
         };
 
         [HttpGet] // GET: api/sectors
-        public ActionResult<IEnumerable<Sector>> GetAll()
+        public ActionResult<IEnumerable<SectorDto>> GetAll()
         {
-            return Ok(_sectors);
+            var sectors = _sectors.Select(s => new SectorDto
+            {
+                Id = s.Id,
+                Name = s.Name,
+                MunicipalityId = s.MunicipalityId,
+                IsActive = s.IsActive
+            }).ToList();
+            return Ok(sectors);
         }
 
         [HttpGet] 
@@ -37,33 +44,47 @@ namespace DenounceBeasts.API.Controllers
         //}
 
         [HttpGet("{id}")] // GET: api/sectors/5
-        public ActionResult<Sector> GetById(int id)
+        public ActionResult<SectorDto> GetById(int id)
         {
             var sector = _sectors.FirstOrDefault(s => s.Id == id);
             if (sector == null)
                 return NotFound();
-            return Ok(sector);
+            var response = new SectorDto
+            {
+                Id = sector.Id,
+                Name = sector.Name,
+                MunicipalityId = sector.MunicipalityId,
+                IsActive = sector.IsActive
+            };
+            return Ok(response);
         }
 
         [HttpPost] // POST: api/sectors
-        public ActionResult<Sector> Create(Sector sector)
+        public ActionResult<Sector> Create(CreateSectorDto request)
         {
-            if (string.IsNullOrWhiteSpace(sector.Name))
+            if (string.IsNullOrWhiteSpace(request.Name))
             {
                 return BadRequest("Name of sector is required.");
             }
-            if (sector.MunicipalityId <= 0)
+            if (request.MunicipalityId <= 0)
             {
                 return BadRequest("MunicipalityId must be provided and positive.");
             }
             // (Podríamos validar aquí que exista un Municipio con ese Id consultando la lista de municipios, 
             //  pero omitiremos esa comprobación en esta versión inicial.)
 
+            var sector = new Sector
+            {
+                Name = request.Name,
+                MunicipalityId = request.MunicipalityId,
+                IsActive = true
+            };
+
             int newId = _sectors.Any() ? _sectors.Max(s => s.Id) + 1 : 1;
             sector.Id = newId;
-            sector.IsActive = true; // siempre creamos como activo
+            //sector.IsActive = true; // siempre creamos como activo
             _sectors.Add(sector);
-            return CreatedAtAction(nameof(GetById), new { id = sector.Id }, sector);
+            return CreatedAtAction(nameof(GetById), new { id = sector.Id }, request);
         }
 
         [HttpPut("{id}")] // PUT: api/sectors/5
