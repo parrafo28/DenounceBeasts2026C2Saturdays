@@ -19,7 +19,7 @@ app.UseAuthorization();
 
 if(app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    app.UseSwagger(); //this is another comment
     app.UseSwaggerUI();
 
 }
