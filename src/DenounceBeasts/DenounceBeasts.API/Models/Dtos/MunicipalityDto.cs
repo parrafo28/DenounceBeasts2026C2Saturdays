@@ -3,18 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DenounceBeasts.API.Models.Entities
 {
-    //[Table("MUNICIPALITY")]
-    public class Municipality
+    public class MunicipalityDto
     {
-        [Key]
-        //[Column("MUNICIPALITY_ID")]
         public int Id { get; set; }
-        //[Column("MUNICIPALITY_NAME")]
         public string Name { get; set; }
-        //[Column("MUNICIPALITY_POSTAL_CODE")]
         public string PostalCode { get; set; }
-        //[Column("MUNICIPALITY_IS_ACTIVE")]
         public bool IsActive { get; set; }
-        public List<Sector> Sectors { get; set; }
+        public List<SectorDto> Sectors { get; set; }
     }
 }
