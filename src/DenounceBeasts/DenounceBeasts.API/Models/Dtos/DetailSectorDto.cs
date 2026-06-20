@@ -2,7 +2,7 @@
 
 namespace DenounceBeasts.API.Models.Dtos
 {
-    public class SectorDto: BaseDto
+    public class DetailSectorDto: BaseDto
     {
         //public int Id { get; set; }
         public string Name { get; set; } = null!;
@@ -10,5 +10,7 @@ namespace DenounceBeasts.API.Models.Dtos
         public bool IsActive { get; set; }
         public string MunicipalityName { get; set; }
         //public MunicipalityDto Municipality { get; set; }
+        public string RandomInfo { get; set; }
+
     }
 }

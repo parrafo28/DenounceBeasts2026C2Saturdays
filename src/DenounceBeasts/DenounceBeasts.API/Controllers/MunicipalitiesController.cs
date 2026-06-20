@@ -1,4 +1,6 @@
-﻿using DenounceBeasts.API.Data;
+﻿using AutoMapper;
+using DenounceBeasts.API.Data;
+using DenounceBeasts.API.Models.Dtos;
 using DenounceBeasts.API.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,23 +9,26 @@ namespace DenounceBeasts.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class MunicipalitiesController : ControllerBase
+    public class MunicipalitiesController : BaseController
     {
 
         //private readonly DbContextOptions<DataContext> options;
-        private readonly DataContext _context;
-        public MunicipalitiesController(DataContext context)
+         readonly DataContext _context;
+         //readonly IMapper _mapper;
+
+        public MunicipalitiesController(DataContext context, IMapper mapper): base(context, mapper)
         {
             //options = new DbContextOptionsBuilder<DataContext>()
             //    .UseSqlServer(databaseName: "MunicipalitiesDB")
             //    .Options;
             //_context = new DataContext(options);
             _context = context;
+          //_mapper = mapper;
         }
 
 
         [HttpGet]
-        public ActionResult<IEnumerable<Municipality>> GetAll()
+        public ActionResult<IEnumerable<MunicipalityDto>> GetAll()
         {
             //var options = new DbContextOptionsBuilder<DataContext>()
             //    .UseSqlServer(databaseName: "MunicipalitiesDB")
@@ -44,7 +49,7 @@ namespace DenounceBeasts.API.Controllers
             //var sectos = _context.Sectors.ToList();
 
 
-            var result = new List<MunicipalityDto>();
+            //var result = new List<MunicipalityDto>();
 
             //foreach (var municipality in _municipalities)
             //{
@@ -96,21 +101,23 @@ namespace DenounceBeasts.API.Controllers
           //      }).ToList()
           //  }).ToList();
 
-          result = _municipalities.Select(m => new MunicipalityDto
-            {
-                Id = m.Id,
-                Name = m.Name,
-                PostalCode = m.PostalCode,
-                IsActive = m.IsActive,
-                Sectors = m.Sectors.Select(s => new SectorDto
-                {
-                    Id = s.Id,
-                    Name = s.Name,
-                    IsActive = s.IsActive
-                }).ToList()
-            }).ToList();
+          //result = _municipalities.Select(m => new MunicipalityDto
+          //  {
+          //      Id = m.Id,
+          //      Name = m.Name,
+          //      PostalCode = m.PostalCode,
+          //      IsActive = m.IsActive,
+          //      Sectors = m.Sectors.Select(s => new SectorDto
+          //      {
+          //          Id = s.Id,
+          //          Name = s.Name,
+          //          IsActive = s.IsActive
+          //      }).ToList()
+          //  }).ToList();
+            // var result = Mapper.Map<List<MunicipalityDto>>(_municipalities);
 
-            return Ok(result);
+            //return Ok(result);
+            return Mapper.Map<List<MunicipalityDto>>(_municipalities);
         }
 
 
@@ -157,13 +164,15 @@ namespace DenounceBeasts.API.Controllers
                 return BadRequest("Name of municipality is required.");
             }
 
-            var municipality = new Municipality
-            {
-                Name = request.Name,
-                PostalCode = request.PostalCode,
-                IsActive = true
-            };
+            //var municipality = new Municipality
+            //{
+            //    Name = request.Name,
+            //    PostalCode = request.PostalCode,
+            //    IsActive = true
+            //};
             // municipality.Id = 1500;
+
+            var municipality = Mapper.Map<Municipality>(request);
 
             _context.Municipalities.Add(municipality);
             _context.SaveChanges();
@@ -175,10 +184,10 @@ namespace DenounceBeasts.API.Controllers
         [HttpPut("{id}")] // PUT: api/municipalities/5
         public IActionResult Update(int id, UpdateMunicipalityDto request)
         {
-            if (id != request.Id)
-            {
-                return BadRequest("ID in URL does not match ID in body.");
-            }
+            //if (id != request.Id)
+            //{
+            //    return BadRequest("ID in URL does not match ID in body.");
+            //}
 
             var existing = _context.Municipalities.FirstOrDefault(m => m.Id == id);
             if (existing == null)

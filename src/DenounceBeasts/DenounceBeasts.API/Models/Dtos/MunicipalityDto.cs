@@ -1,9 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace DenounceBeasts.API.Models.Entities
+﻿namespace DenounceBeasts.API.Models.Dtos
 {
-    public class MunicipalityDto
+    public class MunicipalityDto : BaseDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
