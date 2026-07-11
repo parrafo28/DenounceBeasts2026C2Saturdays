@@ -1,4 +1,6 @@
-﻿namespace DenounceBeasts.API.Models.Entities
+﻿using DenounceBeasts.Domain.Core;
+
+namespace DenounceBeasts.Domain.Entities
 {
     public class Status : BaseEntity//, INameBaseEntity//, IAuditeEntity
     {

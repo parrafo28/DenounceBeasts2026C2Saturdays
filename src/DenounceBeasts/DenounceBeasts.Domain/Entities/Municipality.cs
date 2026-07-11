@@ -1,7 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DenounceBeasts.Domain.Core;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DenounceBeasts.API.Models.Entities
+namespace DenounceBeasts.Domain.Entities
 {
     //[Table("MUNICIPALITY")]
     public class Municipality: BaseEntity

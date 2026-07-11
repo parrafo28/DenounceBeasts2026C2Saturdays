@@ -1,7 +1,7 @@
-﻿using DenounceBeasts.API.Models.Entities;
+﻿using DenounceBeasts.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace DenounceBeasts.API.Data
+namespace DenounceBeasts.Infraestructure.Context
 {
     public class DataContext : DbContext
     {

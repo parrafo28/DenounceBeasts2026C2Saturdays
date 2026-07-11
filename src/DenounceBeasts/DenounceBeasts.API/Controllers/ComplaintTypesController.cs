@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
-using DenounceBeasts.API.Data;
 using DenounceBeasts.API.Models.Dtos;
-using DenounceBeasts.API.Models.Entities;
 using DenounceBeasts.API.Models.Responses;
+using DenounceBeasts.Domain.Entities;
+using DenounceBeasts.Infraestructure.Context;
+using DenounceBeasts.Infraestructure.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,16 +15,26 @@ namespace DenounceBeasts.API.Controllers
     {
 
         private readonly DataContext _context;
-        public ComplaintTypesController(DataContext context, IMapper mapper): base(context, mapper)
+        private readonly GenericRepository<ComplaintType> repository;
+        private readonly ComplaintTypeRepository complaintTypeRepository;
+
+        public ComplaintTypesController(DataContext context,
+            GenericRepository<ComplaintType> repository,
+            ComplaintTypeRepository complaintTypeRepository,
+
+            IMapper mapper) : base(context, mapper)
         {
             _context = context;
+            this.repository = repository;
+            this.complaintTypeRepository = complaintTypeRepository;
         }
 
 
         [HttpGet]
-        public ApiResponse< IEnumerable<ComplaintTypeDto>> GetAll()
+        public ApiResponse<IEnumerable<ComplaintTypeDto>> GetAll()
         {
-            var _complaintTypes = _context.ComplaintTypes.ToList();
+            var _complaintTypes = complaintTypeRepository.GetAll();
+            //var _complaintTypes = _context.ComplaintTypes.ToList();
             //var response = _complaintTypes.Select(ct => new ComplaintTypeDto
             //{
             //    Id = ct.Id,
@@ -51,9 +62,9 @@ namespace DenounceBeasts.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public ApiResponse< ComplaintTypeDto> GetById(int id)
+        public ApiResponse<ComplaintTypeDto> GetById(int id)
         {
-            var complaintType = _context.ComplaintTypes.FirstOrDefault(m => m.Id == id);
+            var complaintType = repository.GetById(id);
             //var response =new ComplaintTypeDto();
             ComplaintTypeDto response;
             if (complaintType == null)

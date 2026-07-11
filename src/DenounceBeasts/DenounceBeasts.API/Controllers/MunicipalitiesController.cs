@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
-using DenounceBeasts.API.Data;
 using DenounceBeasts.API.Models.Dtos;
 using DenounceBeasts.API.Models.Entities;
+using DenounceBeasts.Domain.Entities;
+using DenounceBeasts.Infraestructure.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,17 +14,21 @@ namespace DenounceBeasts.API.Controllers
     {
 
         //private readonly DbContextOptions<DataContext> options;
-         readonly DataContext _context;
-         //readonly IMapper _mapper;
+        readonly DataContext _context;
+        private readonly MunicipalityRepository _repository;
 
-        public MunicipalitiesController(DataContext context, IMapper mapper): base(context, mapper)
+        //readonly IMapper _mapper;
+
+        public MunicipalitiesController(DataContext context, MunicipalityRepository repository,
+            IMapper mapper) : base(context, mapper)
         {
             //options = new DbContextOptionsBuilder<DataContext>()
             //    .UseSqlServer(databaseName: "MunicipalitiesDB")
             //    .Options;
             //_context = new DataContext(options);
             _context = context;
-          //_mapper = mapper;
+            this._repository = repository;
+            //_mapper = mapper;
         }
 
 
@@ -34,7 +39,7 @@ namespace DenounceBeasts.API.Controllers
             //    .UseSqlServer(databaseName: "MunicipalitiesDB")
             //    .Options;
             //var context = new DataContext(options);
-            var _municipalities = _context.Municipalities.ToList();
+            var _municipalities = _repository.GetAll(); // _context.Municipalities.ToList();
             // Retornamos 200 OK con la lista completa.
             return Ok(_municipalities);
         }
@@ -44,8 +49,7 @@ namespace DenounceBeasts.API.Controllers
         public ActionResult<IEnumerable<MunicipalityDto>> GetAllWithSectors()
         {
 
-            var _municipalities = _context.Municipalities.Include(s=> s.Sectors)
-                .ToList();
+            var _municipalities = _repository.GetAllWithSectors(); // _context.Municipalities.Include(s => s.Sectors).ToList();
             //var sectos = _context.Sectors.ToList();
 
 
@@ -87,33 +91,33 @@ namespace DenounceBeasts.API.Controllers
             //    };
             //    result.Add(municipalityDto);
             //}
-          //result = _municipalities.Select(m => new MunicipalityDto
-          //  {
-          //      Id = m.Id,
-          //      Name = m.Name,
-          //      PostalCode = m.PostalCode,
-          //      IsActive = m.IsActive,
-          //      Sectors = sectos.Where(s => s.MunicipalityId == m.Id).Select(s => new SectorDto
-          //      {
-          //          Id = s.Id,
-          //          Name = s.Name,
-          //          IsActive = s.IsActive
-          //      }).ToList()
-          //  }).ToList();
+            //result = _municipalities.Select(m => new MunicipalityDto
+            //  {
+            //      Id = m.Id,
+            //      Name = m.Name,
+            //      PostalCode = m.PostalCode,
+            //      IsActive = m.IsActive,
+            //      Sectors = sectos.Where(s => s.MunicipalityId == m.Id).Select(s => new SectorDto
+            //      {
+            //          Id = s.Id,
+            //          Name = s.Name,
+            //          IsActive = s.IsActive
+            //      }).ToList()
+            //  }).ToList();
 
-          //result = _municipalities.Select(m => new MunicipalityDto
-          //  {
-          //      Id = m.Id,
-          //      Name = m.Name,
-          //      PostalCode = m.PostalCode,
-          //      IsActive = m.IsActive,
-          //      Sectors = m.Sectors.Select(s => new SectorDto
-          //      {
-          //          Id = s.Id,
-          //          Name = s.Name,
-          //          IsActive = s.IsActive
-          //      }).ToList()
-          //  }).ToList();
+            //result = _municipalities.Select(m => new MunicipalityDto
+            //  {
+            //      Id = m.Id,
+            //      Name = m.Name,
+            //      PostalCode = m.PostalCode,
+            //      IsActive = m.IsActive,
+            //      Sectors = m.Sectors.Select(s => new SectorDto
+            //      {
+            //          Id = s.Id,
+            //          Name = s.Name,
+            //          IsActive = s.IsActive
+            //      }).ToList()
+            //  }).ToList();
             // var result = Mapper.Map<List<MunicipalityDto>>(_municipalities);
 
             //return Ok(result);
@@ -124,7 +128,7 @@ namespace DenounceBeasts.API.Controllers
         [HttpGet("{id}")] // GET: api/municipalities/5
         public ActionResult<Municipality> GetById(int id)
         {
-            var municipality = _context.Municipalities.FirstOrDefault(m => m.Id == id);
+            var municipality = _repository.GetById(id); //_context.Municipalities.FirstOrDefault(m => m.Id == id);
             if (municipality == null)
             {
                 // Retornar 404 si no se encontró
@@ -174,8 +178,9 @@ namespace DenounceBeasts.API.Controllers
 
             var municipality = Mapper.Map<Municipality>(request);
 
-            _context.Municipalities.Add(municipality);
-            _context.SaveChanges();
+            //_context.Municipalities.Add(municipality);
+            //_context.SaveChanges();
+            _repository.Create(municipality);
             return Ok(new { id = municipality.Id });
 
         }
@@ -200,8 +205,10 @@ namespace DenounceBeasts.API.Controllers
             existing.PostalCode = request.PostalCode;
             existing.IsActive = request.IsActive;
 
-            _context.Municipalities.Update(existing);
-            _context.SaveChanges();
+            //_context.Municipalities.Update(existing);
+            //_context.SaveChanges();
+
+            _repository.Update(existing);
 
             // Retornar 204 NoContent indicando que se realizó la operación sin devolver cuerpo.
             return NoContent();
@@ -215,9 +222,10 @@ namespace DenounceBeasts.API.Controllers
             {
                 return NotFound();
             }
-            _context.Municipalities.Remove(existing);
-            //_context.Remove(existing);
-            _context.SaveChanges();
+            _repository.Delete(existing);
+            //_context.Municipalities.Remove(existing);
+            ////_context.Remove(existing);
+            //_context.SaveChanges();
             // Retornamos 204 NoContent para indicar que se eliminó correctamente (sin contenido).
             return NoContent();
         }

@@ -1,4 +1,4 @@
-﻿namespace DenounceBeasts.API.Models.Entities
+﻿namespace DenounceBeasts.Domain.Contracts
 {
     public interface INameBaseEntity
     {

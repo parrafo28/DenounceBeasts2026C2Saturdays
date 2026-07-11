@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
-using DenounceBeasts.API.Data;
 using DenounceBeasts.API.Models.Dtos;
-using DenounceBeasts.API.Models.Entities;
+using DenounceBeasts.Domain.Entities;
+using DenounceBeasts.Infraestructure.Context;
+using DenounceBeasts.Infraestructure.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +12,14 @@ namespace DenounceBeasts.API.Controllers
     [Route("api/[controller]")]
     public class StatusController : BaseController
     {
+        private readonly GenericRepository<Status> _repository;
 
         //private readonly DataContext _context;
-        public StatusController(DataContext context, IMapper mapper) : base(context, mapper)
+        public StatusController(DataContext context, IMapper mapper, GenericRepository<Status> repository
+            
+            ) : base(context, mapper)
         {
+            this._repository = repository;
             //_context = context;
         }
 
@@ -22,7 +27,7 @@ namespace DenounceBeasts.API.Controllers
         [HttpGet]
         public IEnumerable<StatusDto> GetAll()
         {
-            var _status = Context.Status.ToList();
+            var _status = _repository.GetAll();
 
             return _status.Select(ct => new StatusDto
             {

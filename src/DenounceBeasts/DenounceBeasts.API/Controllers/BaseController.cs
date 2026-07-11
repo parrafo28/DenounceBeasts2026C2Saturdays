@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
-using DenounceBeasts.API.Data;
+using DenounceBeasts.API.Models.Dtos;
+using DenounceBeasts.Domain.Entities;
+using DenounceBeasts.Infraestructure.Context;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DenounceBeasts.API.Controllers
@@ -19,6 +21,10 @@ namespace DenounceBeasts.API.Controllers
         {
             Context = dataContext;
             Mapper = mapper;
+
+            //var gen = new GenericRepository<int>(dataContext);
+            //var gen = new GenericRepository<ComplaintTypeDto>(dataContext);
+            //var gen = new GenericRepository<ComplaintType>(dataContext);
         }
     }
 }

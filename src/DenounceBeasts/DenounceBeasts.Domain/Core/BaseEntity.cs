@@ -1,4 +1,4 @@
-﻿namespace DenounceBeasts.API.Models.Entities
+﻿namespace DenounceBeasts.Domain.Core
 {
     public class BaseEntity
     {

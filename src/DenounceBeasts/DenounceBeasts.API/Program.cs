@@ -1,12 +1,15 @@
-using DenounceBeasts.API.Data;
+using DenounceBeasts.API.Controllers;
 using DenounceBeasts.API.Models;
+using DenounceBeasts.Domain.Entities;
+using DenounceBeasts.Infraestructure.Context;
+using DenounceBeasts.Infraestructure.Core;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
- 
+
 
 builder.Services.AddControllers();
 
@@ -26,6 +29,11 @@ builder.Services.AddAutoMapper(cfg =>
 //
 //builder.Services.AddAutoMapper(cfg => cfg.LicenseKey = automapperLicence, typeof(MappingProfile));
 
+builder.Services.AddScoped<ComplaintTypeRepository>();
+builder.Services.AddScoped<MunicipalityRepository>();
+builder.Services.AddScoped<GenericRepository<ComplaintType>>();
+builder.Services.AddScoped<GenericRepository<Status>>();
+builder.Services.AddScoped<GenericRepository<Sector>>();
 
 var app = builder.Build();
 
@@ -34,11 +42,11 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-  
 
-if(app.Environment.IsDevelopment())
+
+if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger(); 
+    app.UseSwagger();
     app.UseSwaggerUI();
 }
 

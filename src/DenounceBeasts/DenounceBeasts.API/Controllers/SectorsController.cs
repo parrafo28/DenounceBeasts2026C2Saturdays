@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
-using DenounceBeasts.API.Data;
 using DenounceBeasts.API.Models.Dtos;
 using DenounceBeasts.API.Models.Entities;
+using DenounceBeasts.Domain.Entities;
+using DenounceBeasts.Infraestructure.Context;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -101,7 +102,7 @@ namespace DenounceBeasts.API.Controllers
         [HttpGet("{id}")] // GET: api/sectors/5
         public ActionResult<DetailSectorDto> GetById(int id)
         {
-            var sector = _context.Sectors.Include(p=>p.Municipality).FirstOrDefault(s => s.Id == id);
+            var sector = _context.Sectors.Include(p => p.Municipality).FirstOrDefault(s => s.Id == id);
             if (sector == null)
                 return NotFound();
 
@@ -111,7 +112,7 @@ namespace DenounceBeasts.API.Controllers
                 Name = sector.Name,
                 MunicipalityId = sector.MunicipalityId,
                 IsActive = sector.IsActive,
-                MunicipalityName =  sector.Municipality != null ? sector.Municipality.Name : "Unknown"                ,
+                MunicipalityName = sector.Municipality != null ? sector.Municipality.Name : "Unknown",
                 //RandomInfo = sector.RandomInfo
             };
 
